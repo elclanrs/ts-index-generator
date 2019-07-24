@@ -48,6 +48,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "commander": "^2.20.0",
     "glob": "^7.1.4",
     "lodash": "^4.17.15"
   },

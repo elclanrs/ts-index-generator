@@ -64,10 +64,16 @@ test/root/
 >**Note:** if you don't provide a `path` the root will be the folder where the comand is run
 
 ```sh
-ts-index-generator [path]
+ts-index-generator [options...] <path>
 ```
 
-Examples:
+### Options:
+
+Option | Description | Example
+--- | --- | ---
+`-i, --ignore` | Ignored file patterns | `-i '**/*.spec.ts','**/test.ts'`
+
+### Examples:
 
 ```sh
 ts-index-generator path/to/root

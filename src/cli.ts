@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
+import program from 'commander';
 import { clearIndexes, getIndexes } from './helpers';
 
-const rootPath = process.argv[2] || process.cwd();
+const pkg = require('../package.json'); // eslint-disable-line @typescript-eslint/no-var-requires
 
-clearIndexes(rootPath);
-
-getIndexes(rootPath).forEach(index => {
-  fs.appendFileSync(index.path, `${index.export}\n`);
-});
+program
+  .version(pkg.version)
+  .option('-i, --ignore [patterns...]', 'Ignored file patterns', s => s.split(','), [])
+  .arguments('<path>')
+  .action(rootPath => {
+    rootPath = rootPath || process.cwd(); // eslint-disable-line no-param-reassign
+    clearIndexes(rootPath);
+    getIndexes(rootPath, program.ignore).forEach(index => {
+      fs.appendFileSync(index.path, `${index.export}\n`);
+    });
+  })
+  .parse(process.argv);

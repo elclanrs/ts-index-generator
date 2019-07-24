@@ -17,10 +17,10 @@ export function clearIndexes(rootPath: string): void {
   });
 }
 
-export function getIndexes(rootPath: string): IndexFile[] {
+export function getIndexes(rootPath: string, ignore: string[] = []): IndexFile[] {
   const files = glob.sync(`${rootPath}/**/*.ts`, {
     nodir: true,
-    ignore: ['**/index.ts'],
+    ignore: ['**/index.ts', ...ignore],
   });
   return _(files)
     .flatMap(file => {

@@ -2,7 +2,7 @@ import test from 'ava';
 import { getIndexes } from '../src/helpers';
 
 test('getIndexes', t => {
-  const actual = getIndexes('test/root');
+  const actual = getIndexes('test/root', ['**/*.spec.ts']);
   const expected = [
     {
       path: 'test/root/a/a1/index.ts',
