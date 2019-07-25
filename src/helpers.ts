@@ -8,6 +8,10 @@ export interface IndexFile {
   export: string;
 }
 
+export interface IndexOptions {
+  ignore: string[];
+}
+
 export function clearIndexes(rootPath: string): void {
   const indexes = glob.sync(`${rootPath}/**/index.ts`);
   indexes.forEach(file => {
@@ -17,15 +21,15 @@ export function clearIndexes(rootPath: string): void {
   });
 }
 
-export function getIndexes(rootPath: string, ignore: string[] = []): IndexFile[] {
+export function getIndexes(rootPath: string, { ignore = [] }: IndexOptions): IndexFile[] {
   const files = glob.sync(`${rootPath}/**/*.ts`, {
     nodir: true,
     ignore: ['**/index.ts', ...ignore],
   });
   return _(files)
     .flatMap(file => {
-      const filename = path.basename(file).split('.').slice(0, -1);
-      const parents = path.dirname(file).replace(`${process.cwd()}/`, '').split(path.sep);
+      const filename = path.basename(file).split('.').slice(0, -1).join('.');
+      const parents = path.relative(rootPath, path.dirname(file)).split(path.sep);
       const contents = fs.readFileSync(file, 'utf8').trim();
       if (contents.startsWith('// no-export')) {
         return [];
@@ -35,24 +39,20 @@ export function getIndexes(rootPath: string, ignore: string[] = []): IndexFile[]
           const before = parents.slice(0, -idx);
           const after = parents.slice(-idx);
           if (before.length === 0) {
-            const out: IndexFile = {
-              path: path.join(after.join(path.sep), 'index.ts'),
+            return {
               export: `export * from './${filename}';`,
+              path: path.join(rootPath, after.join('/'), 'index.ts'),
             };
-            return out;
           }
-          if (after.length === 1) {
-            const out: IndexFile = {
-              path: path.join(before.join(path.sep), 'index.ts'),
-              export: `export * from './${after.join('/')}/index';`,
-            };
-            return out;
-          }
-          return null;
+          return {
+            export: `export * from './${after[0]}/index';`,
+            path: path.join(rootPath, before.join('/'), 'index.ts'),
+          };
         })
         .compact()
+        .uniqWith(_.isEqual)
         .value();
     })
-    .uniqBy('export')
+    .uniqWith(_.isEqual)
     .value();
 }

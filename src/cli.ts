@@ -11,9 +11,8 @@ program
   .option('-i, --ignore [patterns...]', 'Ignored file patterns', s => s.split(','), [])
   .arguments('<path>')
   .action(rootPath => {
-    rootPath = rootPath || process.cwd(); // eslint-disable-line no-param-reassign
     clearIndexes(rootPath);
-    getIndexes(rootPath, program.ignore).forEach(index => {
+    getIndexes(rootPath, { ignore: program.ignore }).forEach(index => {
       fs.appendFileSync(index.path, `${index.export}\n`);
     });
   })

@@ -64,7 +64,7 @@ test/root/
 >**Note:** if you don't provide a `path` the root will be the folder where the comand is run
 
 ```sh
-ts-index-generator [options...] <path>
+ts-index-generator [options...] [path]
 ```
 
 ### Options:
