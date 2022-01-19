@@ -22,7 +22,7 @@ export function clearIndexes(rootPath: string): void {
 }
 
 export function getIndexes(rootPath: string, { ignore = [] }: IndexOptions): IndexFile[] {
-  const files = glob.sync(`${rootPath}/**/*.ts`, {
+  const files = glob.sync(`${rootPath}/**/*.(ts|tsx)`, {
     nodir: true,
     ignore: ['**/index.ts', ...ignore],
   });
